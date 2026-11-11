@@ -1,0 +1,41 @@
+{
+  "title": "Polyhedral Earth: Structural Geometry, Solar Reception, and Cross-Scale Invariance",
+  "upload_type": "publication",
+  "publication_type": "other",
+  "description": "This research examines polyhedral geometry as a structural representation for investigating planetary form, solar reception, and cross-scale geometric relationships. A polyhedron retains discrete planar faces, edges, vertices, face areas, and face-normal directions. These geometric properties provide measurable quantities for examining orientation, projected area, directional exposure, and structural differentiation.\n\nThe planetary research program focuses on the June solstice and Arctic regions of North America, Greenland, and northern Eurasia. Locations north of the Arctic Circle experience continuous daylight during the relevant seasonal interval. Daylight duration, solar declination, geographic latitude, Earth–Sun distance, incident irradiance, and regional temperature are treated as distinct variables. Temperature comparisons require identified stations, defined climatological periods, and traceable observational sources.\n\nThe mathematical program includes face-resolved solar incidence and projected-area calculations. For a planar face i, the idealized direct-beam contribution may be expressed as P_i = E(r) A_i max(0, n_i · s), where E(r) is solar irradiance at the relevant Earth–Sun distance, A_i is the face area, n_i is the outward unit normal, and s is the unit vector toward the incoming source. This equation describes geometric projection; it does not establish that Earth is physically a regular polyhedron.\n\nThe cross-scale research direction investigates whether polyhedral descriptors—faces, edges, vertices, adjacency, orientation, and scale-dependent measurements—can serve as a comparative structural language across atomic, molecular, biological, and planetary examples. Similarity of mathematical description is not, by itself, evidence of a shared physical mechanism.\n\nThe work follows the Macachor territory–cartography distinction: territory is reality; cartography is representation; correspondence is the test. Models are representations whose validity must be assessed through mathematical consistency, correspondence with observations, explicit uncertainty, and falsifiable comparisons.\n\nThis record presents a research framework and model-development program. It distinguishes observed measurements, derived geometric quantities, proposed interpretations, and unresolved empirical questions. It does not claim that a polyhedral Earth geometry has been established by the evidence presented here.",
+  "creators": [
+    {
+      "name": "Macachor, Christopher",
+      "orcid": "0009-0008-0100-2856",
+      "affiliation": "Macachor Absolute Scalar Research; Scalar Consciousness Research"
+    }
+  ],
+  "keywords": [
+    "Polyhedral Earth",
+    "polyhedral geometry",
+    "planetary geometry",
+    "solar incidence",
+    "Arctic summer solstice",
+    "solar declination",
+    "projected area",
+    "face-normal vectors",
+    "structural invariance",
+    "cross-scale comparison",
+    "territory and cartography",
+    "Macachor Research Corpus"
+  ],
+  "language": "eng",
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.23972588",
+      "relation": "isPartOf",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.5281/zenodo.23964606",
+      "relation": "references",
+      "scheme": "doi"
+    }
+  ],
+  "notes": "Draft metadata. No DOI has been assigned to this record. Confirm the final resource type, license, affiliation wording, related-record relationships, and deposited files before publication."
+}
