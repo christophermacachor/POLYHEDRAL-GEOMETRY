@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Macachor | Polyhedral Geometry Across Scales</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#050b16;color:#e5edf7;font:14px ui-monospace,monospace}
+.panel{background:rgba(10,20,37,.94);border:1px solid #33465e;border-radius:12px}
+input,select{accent-color:#38bdf8;background:#101d30;border:1px solid #40536b;border-radius:6px;padding:5px;color:#e5edf7;width:100%}
+label{display:block;color:#9fb1c8;font-size:11px;margin:10px 0 4px}.muted{color:#9aabc0}.cyan{color:#67d7ff}.amber{color:#ffd166}.green{color:#70e0b2}.red{color:#ff8b8b}
+button{border:1px solid #40536b;border-radius:7px;padding:7px 10px;background:#14243a;color:#dbeafe}button.active{border-color:#67d7ff;background:#12334a}
+#view{position:fixed;inset:0;z-index:0}#ui{position:relative;z-index:2;pointer-events:none;padding:14px;display:grid;grid-template-columns:minmax(280px,360px) 1fr minmax(260px,320px);gap:12px;min-height:100vh}
+#ui>*{pointer-events:auto}.scroll{max-height:calc(100vh - 28px);overflow:auto;padding:14px}.metric{background:#101d30;border-left:3px solid #67d7ff;padding:8px;margin:6px 0}.small{font-size:11px;line-height:1.5}.formula{background:#07111f;border:1px solid #30445d;border-radius:8px;padding:10px;text-align:center;margin:8px 0;overflow-wrap:anywhere}
+#center{align-self:end;justify-self:center;max-width:620px;margin-bottom:10px;text-align:center}
+@media(max-width:950px){#ui{grid-template-columns:1fr 1fr}#right{grid-column:2}#left{grid-column:1}#center{grid-column:1/3;grid-row:2} .scroll{max-height:48vh}}
+@media(max-width:620px){#ui{display:flex;flex-direction:column}#left,#right{max-height:42vh}#center{order:3}}
+</style>
+</head>
+<body>
+<div id="view"></div>
+<div id="ui">
+<section id="left" class="panel scroll">
+<h1 class="text-lg font-bold cyan">POLYHEDRAL GEOMETRY</h1>
+<p class="muted small">Planetary and embodied scales · interactive geometric model</p>
+<div class="flex gap-2 my-3"><button id="planetBtn" class="active">Planetary</button><button id="bodyBtn">Embodied</button></div>
+<h2 class="font-bold amber mt-3">Polyhedron family</h2>
+<label for="shape">Select geometry</label>
+<select id="shape">
+<option value="icosa">Icosahedron · 20 faces</option><option value="dodeca">Dodecahedron · 12 faces</option>
+<option value="octa">Octahedron · 8 faces</option><option value="cube">Cube · 6 faces</option><option value="tetra">Tetrahedron · 4 faces</option>
+</select>
+<label for="solstice">Solar declination / seasonal setting</label>
+<select id="solstice"><option value="23.44">June solstice · +23.44°</option><option value="0">Equinox · 0°</option><option value="-23.44">December solstice · −23.44°</option></select>
+<label for="hour">Hour angle: <span id="hourText" class="cyan">0°</span></label>
+<input id="hour" type="range" min="-180" max="180" value="0">
+<label for="latitude">Observer latitude: <span id="latText" class="cyan">70° N</span></label>
+<input id="latitude" type="range" min="50" max="90" value="70">
+<label for="distance">Earth–Sun distance (AU): <span id="distText" class="cyan">1.000</span></label>
+<input id="distance" type="range" min=".983" max="1.017" step=".001" value="1">
+<label for="faceScale">Selected face area scale: <span id="areaText" class="cyan">1.00</span></label>
+<input id="faceScale" type="range" min=".25" max="2" step=".05" value="1">
+<div class="formula"><span class="cyan">Pᵢ = S₀ (AU/r)² Aᵢ max(0, nᵢ · ŝ)</span></div>
+<p class="small muted">Face-resolved incident power. The face normal and incoming solar direction determine incidence; face area determines total intercepted power.</p>
+<div class="metric"><span class="muted">Solar incidence cosine</span><div id="dot" class="text-xl cyan">—</div></div>
+<div class="metric"><span class="muted">Incident irradiance</span><div id="irr" class="text-xl amber">—</div></div>
+<div class="metric"><span class="muted">Face power (normalized area)</span><div id="power" class="text-xl green">—</div></div>
+</section>
+
+<div id="center" class="panel p-3 small">
+<div class="font-bold cyan">GEOMETRY IS THE COMPARISON DOMAIN</div>
+<div class="muted">Planar faces, edges, vertices, face normals and scale-dependent measurements remain visible. Rotate with pointer; zoom with wheel.</div>
+<div id="status" class="mt-2 amber">Planetary model · June solstice</div>
+</div>
+
+<section id="right" class="panel scroll">
+<h2 class="font-bold green">Arctic summer-solstice test</h2>
+<p class="small muted">The June solstice geometry produces polar day north of the Arctic Circle. Daylight duration depends on latitude and solar declination.</p>
+<div class="formula"><span class="green">H₀ = arccos(−tan φ tan δ)</span><br><span class="small muted">If −tan φ tan δ ≤ −1, continuous daylight; if ≥ 1, polar night.</span></div>
+<div class="metric"><span class="muted">Daylight duration</span><div id="daylight" class="text-xl green">—</div></div>
+<div class="metric"><span class="muted">Midnight Sun condition</span><div id="polar" class="text-lg amber">—</div></div>
+<h3 class="font-bold mt-4">July mean temperature examples</h3>
+<p class="small muted">JMA climatological normals, selected stations. These are regional station examples, not a controlled causal comparison.</p>
+<div class="small overflow-x-auto">
+<table class="w-full text-left"><thead><tr class="text-cyan"><th>Station</th><th>Region</th><th>July mean</th></tr></thead><tbody>
+<tr><td>Nome</td><td>Alaska</td><td>11.2°C</td></tr>
+<tr><td>Anchorage</td><td>Alaska</td><td>15.4°C</td></tr>
+<tr><td>Goose</td><td>Canada</td><td>15.8°C</td></tr>
+<tr><td>Whitehorse</td><td>Canada</td><td>14.5°C</td></tr>
+<tr><td>Tasiilaq</td><td>Greenland</td><td>7.2°C</td></tr>
+<tr><td>Prince Albert</td><td>Canada</td><td>18.0°C</td></tr>
+</tbody></table>
+</div>
+<p class="small muted mt-2">Temperature varies with latitude, maritime influence, cloud, snow/ice, elevation, circulation and land properties. Continuous daylight does not by itself determine the warmest local temperature.</p>
+<h3 class="font-bold mt-4">Evidence boundary</h3>
+<p class="small">Observed: polar-day duration, solar declination, station temperatures and Earth–Sun distance.</p>
+<p class="small">Model representation: polyhedral face geometry and face-resolved projected area.</p>
+<p class="small red">Not established by this visualization: that the physical Earth is a regular polyhedron, or that a planar face causes the Earth–Sun distance or the midnight Sun.</p>
+<hr class="my-3 border-slate-700">
+<h2 class="font-bold green">Embodied-scale comparison</h2>
+<p class="small muted">A geometric analogy for distributed biological interfaces. It does not assert that neural anatomy is literally a polyhedron.</p>
+<div class="metric"><span class="muted">Comparison variables</span><div class="small">Interface orientation · area · signal direction · normalized signal intensity</div></div>
+<label for="signal">Signal intensity: <span id="signalText" class="green">50%</span></label>
+<input id="signal" type="range" min="0" max="100" value="50">
+<div class="formula"><span class="green">Lᵢ = I · Aᵢ · max(0, nᵢ · ŝ)</span></div>
+<p class="small muted">This is a geometric projection model, not a validated physiological equation or a measurement of vagal/enteric signal load.</p>
+</section>
+</div>
+<script>
+const host=document.getElementById('view');
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x050b16);
+const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,.1,1000); camera.position.set(0,3.5,10);
+const renderer=new THREE.WebGLRenderer({antialias:true}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight); host.appendChild(renderer.domElement);
+const controls=new THREE.OrbitControls(camera,renderer.domElement); controls.enableDamping=true;
+scene.add(new THREE.AmbientLight(0x9ab5d0,.75));
+const key=new THREE.DirectionalLight(0xffffff,2.1); key.position.set(5,7,8); scene.add(key);
+const group=new THREE.Group(); scene.add(group);
+const sun=new THREE.Mesh(new THREE.SphereGeometry(.38,24,24),new THREE.MeshBasicMaterial({color:0xffd166})); sun.position.set(-5,1.7,0); scene.add(sun);
+let mesh,edgeLines,faceMeshes=[],isBody=false;
+const shapeFns={
+icosa:()=>new THREE.IcosahedronGeometry(2,0),
+dodeca:()=>new THREE.DodecahedronGeometry(2,0),
+octa:()=>new THREE.OctahedronGeometry(2,0),
+cube:()=>new THREE.BoxGeometry(3,3,3),
+tetra:()=>new THREE.TetrahedronGeometry(2.5,0)
+};
+function disposeGroup(){while(group.children.length){const o=group.children.pop();if(o.geometry)o.geometry.dispose();if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose();}}}
+function build(){
+ disposeGroup(); faceMeshes=[];
+ let g=shapeFns[document.getElementById('shape').value]();
+ // Convert indexed geometries to non-indexed triangles so every triangle carries a face color.
+ g=g.toNonIndexed(); g.computeVertexNormals();
+ const pos=g.attributes.position, colors=[];
+ const material=new THREE.MeshStandardMaterial({vertexColors:true,flatShading:true,roughness:.82,metalness:.05,side:THREE.DoubleSide});
+ for(let i=0;i<pos.count;i+=3){
+   const a=new THREE.Vector3().fromBufferAttribute(pos,i),b=new THREE.Vector3().fromBufferAttribute(pos,i+1),c=new THREE.Vector3().fromBufferAttribute(pos,i+2);
+   const n=new THREE.Vector3().subVectors(b,a).cross(new THREE.Vector3().subVectors(c,a)).normalize();
+   const col=new THREE.Color().setHSL(.53+Math.abs(n.y)*.13,.72,.34+.18*Math.abs(n.y));
+   for(let j=0;j<3;j++)colors.push(col.r,col.g,col.b);
+   const centroid=a.clone().add(b).add(c).divideScalar(3);
+   faceMeshes.push({normal:n,centroid,area:new THREE.Vector3().subVectors(b,a).cross(new THREE.Vector3().subVectors(c,a)).length()/2});
+ }
+ g.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+ mesh=new THREE.Mesh(g,material);group.add(mesh);
+ edgeLines=new THREE.LineSegments(new THREE.EdgesGeometry(g),new THREE.LineBasicMaterial({color:0x8ddcff,transparent:true,opacity:.8}));group.add(edgeLines);
+}
+function calc(){
+ const delta=Number(solstice.value)*Math.PI/180,H=Number(hour.value)*Math.PI/180;
+ const lat=Number(latitude.value)*Math.PI/180,r=Number(distance.value),scale=Number(faceScale.value);
+ const S0=1361, AU=1;
+ // A representative face normal is rotated with the model; all calculations are explicit and inspectable.
+ const f=faceMeshes.reduce((best,x)=>x.normal.y>best.normal.y?x:best,faceMeshes[0]);
+ const normal=f.normal.clone().applyAxisAngle(new THREE.Vector3(0,1,0),H);
+ const sunDir=new THREE.Vector3(Math.cos(delta)*Math.sin(H),Math.sin(delta),Math.cos(delta)*Math.cos(H)).normalize();
+ const cosine=normal.dot(sunDir),irr=S0*(AU/r)**2*Math.max(0,cosine),power=irr*f.area*scale;
+ dot.textContent=cosine.toFixed(4);irrEl.textContent=irr.toFixed(1)+' W/m²';powerEl.textContent=power.toFixed(1)+' W (model face)';
+ const x=-Math.tan(lat)*Math.tan(delta);
+ let hours,condition;
+ if(x<=-1){hours=24;condition='24 h daylight';}
+ else if(x>=1){hours=0;condition='Polar night';}
+ else{hours=24*Math.acos(-Math.tan(lat)*Math.tan(delta))/Math.PI;condition='Sunrise and sunset';}
+ daylight.textContent=hours.toFixed(2)+' hours';polar.textContent=condition;
+ hourText.textContent=hour.value+'°';latText.textContent=latitude.value+'° N';distText.textContent=r.toFixed(3);areaText.textContent=scale.toFixed(2);
+ signalText.textContent=signal.value+'%';
+ group.rotation.z=isBody?0: -delta;
+ group.rotation.y=H*.35;
+ status.textContent=(isBody?'Embodied geometric analogy':'Planetary model')+' · '+(delta>0?'June solstice':delta<0?'December solstice':'Equinox')+' · '+document.getElementById('shape').selectedOptions[0].text;
+}
+const solstice=document.getElementById('solstice'),hour=document.getElementById('hour'),latitude=document.getElementById('latitude'),distance=document.getElementById('distance'),faceScale=document.getElementById('faceScale'),signal=document.getElementById('signal');
+const dot=document.getElementById('dot'),irrEl=document.getElementById('irr'),powerEl=document.getElementById('power'),daylight=document.getElementById('daylight'),polar=document.getElementById('polar'),hourText=document.getElementById('hourText'),latText=document.getElementById('latText'),distText=document.getElementById('distText'),areaText=document.getElementById('areaText'),signalText=document.getElementById('signalText'),status=document.getElementById('status');
+document.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',calc));
+document.getElementById('shape').addEventListener('change',()=>{build();calc()});
+document.getElementById('planetBtn').onclick=()=>{isBody=false;document.getElementById('planetBtn').classList.add('active');document.getElementById('bodyBtn').classList.remove('active');calc()};
+document.getElementById('bodyBtn').onclick=()=>{isBody=true;document.getElementById('bodyBtn').classList.add('active');document.getElementById('planetBtn').classList.remove('active');calc()};
+build();calc();
+function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+</script>
+</body></html>
