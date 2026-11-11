@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this research record, please cite it using the metadata below. Add the assigned Zenodo DOI after publication."
+title: "Polyhedral Earth: Structural Geometry, Solar Reception, and Cross-Scale Invariance"
+type: article
+authors:
+  - family-names: Macachor
+    given-names: Christopher
+    orcid: "https://orcid.org/0009-0008-0100-2856"
+    affiliation: "Macachor Absolute Scalar Research; Scalar Consciousness Research"
+url: "https://earth.macachor.org/"
+abstract: >-
+  A research framework examining polyhedral geometry, face-resolved solar
+  incidence, Arctic solstice observations, and cross-scale structural comparison.
+  The work distinguishes geometric models and hypotheses from observationally
+  established planetary properties.
+keywords:
+  - polyhedral geometry
+  - planetary geometry
+  - Arctic summer solstice
+  - solar incidence
+  - structural invariance
+  - cross-scale comparison

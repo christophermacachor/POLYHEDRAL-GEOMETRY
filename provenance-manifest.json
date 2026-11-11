@@ -1,0 +1,30 @@
+{
+  "record_title": "Polyhedral Earth: Structural Geometry, Solar Reception, and Cross-Scale Invariance",
+  "author": "Christopher Macachor",
+  "orcid": "0009-0008-0100-2856",
+  "research_site": "https://earth.macachor.org/",
+  "record_doi": null,
+  "related_records": [
+    "https://doi.org/10.5281/zenodo.23972588",
+    "https://doi.org/10.5281/zenodo.23964606"
+  ],
+  "preparation_note": "Draft package. Live site returned HTTP 403 during preparation; current site contents were not independently verified. License intentionally left unset.",
+  "files": {
+    ".zenodo.json": {
+      "sha256": "2eda54b7ab9be2859606713641b2634f14faddf5bd762b03f3c78c53864cf7e6",
+      "bytes": 3676
+    },
+    "README.md": {
+      "sha256": "7f8967572978d25620a15695662370c1ddec83bcdcd164b1fc0ebc398198a1e4",
+      "bytes": 8268
+    },
+    "citation.cff": {
+      "sha256": "eb3fe5ef82100266d5bd1f5199ed323bccf7e127005ccdcefb2ccbd5827ec156",
+      "bytes": 932
+    },
+    "index.html": {
+      "sha256": "0e564bdcd6334d255275939cdd0c3aa58aeffab3fbbc174dde1a20d0584347e9",
+      "bytes": 3498
+    }
+  }
+}
